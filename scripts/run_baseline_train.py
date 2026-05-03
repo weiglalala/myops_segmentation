@@ -1,4 +1,4 @@
-"""5-fold cross-validation training with baseline configuration."""
+"""Train baseline 5-fold model: original data, lr=1e-3, crop=224."""
 from __future__ import annotations
 
 import subprocess
@@ -52,7 +52,9 @@ def main() -> None:
         else:
             print(f"[DONE] fold {fold}")
 
-    print("\nAll 5 folds complete.")
+    print("\n" + "="*60)
+    print("ALL 5 FOLDS COMPLETE.")
+    print("="*60)
 
 
 if __name__ == "__main__":

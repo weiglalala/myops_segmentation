@@ -1,31 +1,25 @@
-# Data
-data/train/
-data/test/
-data/train_augmented/
-
-# Training artifacts
-checkpoints/
-logs/
-results/
-
-# Python
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
 dist/
 build/
 *.egg
-
-# IDE
+data/
+!data/README.md
+checkpoints/
+logs/
+results/
 .idea/
 .vscode/
+.claude/
+*.pt
+*.pth
+*.nii
+*.nii.gz
+.env
 *.swp
 *.swo
-
-# OS
+*~
 .DS_Store
 Thumbs.db
-
-# Misc
-*.tmp
-.tmp.*

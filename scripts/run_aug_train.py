@@ -1,4 +1,4 @@
-"""5-fold cross-validation training with augmented data."""
+"""Train augmented 5-fold model: aug data, lr=5e-4, crop=320."""
 from __future__ import annotations
 
 import subprocess
@@ -34,7 +34,7 @@ EXPERIMENT_NAME = "exp_aug_5fold"
 
 def main() -> None:
     print(f"Training augmented 5-fold: {EXPERIMENT_NAME}")
-    print(f"Config: augmented data, lr=5e-4, crop=320\n")
+    print(f"Config: aug data, lr=5e-4, crop=320\n")
 
     for fold in range(5):
         print(f"\n{'='*60}")
@@ -53,7 +53,9 @@ def main() -> None:
         else:
             print(f"[DONE] fold {fold}")
 
-    print("\nAll 5 folds complete.")
+    print("\n" + "="*60)
+    print("ALL 5 FOLDS COMPLETE.")
+    print("="*60)
 
 
 if __name__ == "__main__":

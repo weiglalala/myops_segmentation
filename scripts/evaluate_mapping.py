@@ -1,18 +1,18 @@
-"""Evaluate fixed mapping strategy: edema from baseline, scar from augmented model.
-Produces merged predictions and computes full metrics including union dice."""
+"""Fixed mapping inference: edema from baseline, scar from aug model.
+Produces a merged prediction mask and evaluates with full metrics including union dice."""
 from __future__ import annotations
 
 import csv
 import sys
-from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
 import torch
 from tqdm import tqdm
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from dataclasses import replace
 from src.config import build_parser, make_settings
 from src.constants import EDEMA_CLASS_INDEX, SCAR_CLASS_INDEX
 from src.engine import (
@@ -25,10 +25,11 @@ from src.engine import (
 )
 from src.metrics import evaluate_case
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent
 
-BASELINE_CHECKPOINTS = [f"checkpoints/exp_baseline_5fold_fold{i}/best_model.pt" for i in range(5)]
+BASELINE_CHECKPOINTS = [f"checkpoints/exp_smp_kfold_retrain_fold{i}/best_model.pt" for i in range(5)]
 AUG_CHECKPOINTS = [f"checkpoints/exp_aug_5fold_fold{i}/best_model.pt" for i in range(5)]
+
 BASELINE_CROP = (224, 224)
 AUG_CROP = (320, 320)
 
@@ -58,6 +59,7 @@ def run_inference(settings, checkpoint_paths, device):
 
 
 def merge_fixed_mapping(baseline_pred, aug_pred):
+    """Take everything from baseline, but replace scar with aug's scar."""
     merged = baseline_pred.copy()
     merged[baseline_pred == SCAR_CLASS_INDEX] = 0
     merged[aug_pred == SCAR_CLASS_INDEX] = SCAR_CLASS_INDEX
@@ -103,13 +105,17 @@ def main():
 
     avg_e = sum(edema_dices) / len(edema_dices)
     avg_s = sum(scar_dices) / len(scar_dices)
+    avg_m = (avg_e + avg_s) / 2
     avg_u = sum(union_dices) / len(union_dices)
 
-    print(f"\nFixed Mapping Results (edema=baseline, scar=aug):")
+    print(f"\n{'='*60}")
+    print("FIXED MAPPING RESULTS (edema=baseline, scar=aug)")
+    print(f"{'='*60}")
     print(f"  Edema Dice:  {avg_e:.4f}")
-    print(f"  Scar Dice:   {avg_s:.4f}")
-    print(f"  Mean Dice:   {(avg_e + avg_s) / 2:.4f}")
-    print(f"  Union Dice:  {avg_u:.4f}")
+    print(f"  Scar Dice:   {avg_s:.4f}  (excl. {NO_SCAR_CASES})")
+    print(f"  Mean Dice:   {avg_m:.4f}")
+    print(f"  Union Dice:  {avg_u:.4f}  (scar | edema region)")
+    print(f"\n  Per-case CSV: {csv_path}")
 
 
 if __name__ == "__main__":
