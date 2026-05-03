@@ -1,6 +1,6 @@
 # MyoPS Segmentation
 
-Automated segmentation of myocardial pathology (edema and scar) from multi-sequence cardiac MRI, built for the [MyoPS 2020 Challenge](https://myops20.grand-challenge.org/).
+Automated segmentation of myocardial pathology (edema and scar) from multi-sequence cardiac MRI, built for the [MyoPS 2020 Challenge]([MyoPS 2020](https://zmiclab.github.io/zxh/0/myops20/index.html)).
 
 ## Method Overview
 
