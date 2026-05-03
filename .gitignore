@@ -1,0 +1,31 @@
+# Data
+data/train/
+data/test/
+data/train_augmented/
+
+# Training artifacts
+checkpoints/
+logs/
+results/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.tmp
+.tmp.*
