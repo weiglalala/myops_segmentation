@@ -36,7 +36,7 @@ This project uses the **MyoPS 2020 Challenge** dataset (25 train / 20 test cases
 ## Installation
 
 ```bash
-git clone https://github.com/your-username/myops_segmentation.git
+git clone https://github.com/weiglalala/myops_segmentation.git
 cd myops_segmentation
 pip install -r requirements.txt
 ```
