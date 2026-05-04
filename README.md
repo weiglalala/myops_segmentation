@@ -2,6 +2,20 @@
 
 Automated segmentation of myocardial pathology (edema and scar) from multi-sequence cardiac MRI, built for the [MyoPS 2020 Challenge]([MyoPS 2020](https://zmiclab.github.io/zxh/0/myops20/index.html)).
 
+## Motivation
+
+The core challenge here is the extremely small dataset: only 25 labeled training cases, with pathology regions occupying less than 0.6% of total voxels. That rules out most heavy architectures and fancy training tricks — they just overfit immediately.
+
+I went with a 2.5D approach: stack 3 adjacent slices across 3 MRI modalities (C0, T2, LGE) into a 9-channel 2D input, then feed it into a standard UNet with a ResNet34 encoder. Simple, but it keeps the parameter count low enough to actually learn from 25 cases. 5-fold cross-validation with softmax averaging gives a solid ensemble without needing multiple architectures.
+
+The most interesting finding was around data augmentation. I generated offline augmented data (elastic deformation, intensity shifts, spatial transforms) to expand the training set from 25 to 125 cases. This significantly improved scar segmentation (+0.040 Dice) but actually hurt edema (-0.029 Dice). Edema boundaries are inherently fuzzy and irregular, so the augmented distribution shifts made things worse for that class.
+
+This led to the **fixed mapping strategy**: use the baseline model for edema predictions and the augmented model for scar predictions. It's a simple idea, but it gave the best overall Mean Dice (0.532) by combining each model's strength.
+
+I also spent time on directions that didn't work out — task decomposition into separate expert models, scar class weight tuning, and constraining predictions to the myocardium region. All failed, and the reasons are documented below. The myocardium constraint was particularly surprising: even using perfect ground-truth myocardium masks, the Dice score dropped dramatically, because the dataset annotations themselves place scar and edema outside the myocardium boundary.
+
+**Final results**: Scar Dice **0.699** (close to the challenge champion's 0.708), Mean Dice **0.532**, Union Dice **0.695**. The main gap to the champion (UESTC, Mean Dice 0.720) is in edema segmentation — that remains the hard problem.
+
 ## Method Overview
 
 This project implements a 2.5D multi-modal segmentation pipeline:
